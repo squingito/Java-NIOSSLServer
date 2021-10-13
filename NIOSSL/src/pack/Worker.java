@@ -9,9 +9,11 @@ import java.util.concurrent.BlockingQueue;
 public class Worker implements Runnable{
     private NIOSSL server;
     private UserIOManager userIOManager;
+    private ServerSystem serverSystem;
 
 
-    public Worker(NIOSSL server,UserIOManager userIOManager) {
+    public Worker(ServerSystem serverSystem, NIOSSL server,UserIOManager userIOManager) {
+        this.serverSystem = serverSystem;
         this.server = server;
         this.userIOManager = userIOManager;
     }
@@ -29,7 +31,7 @@ public class Worker implements Runnable{
         while(server.getRunning()) {
             while (true) {
                 try {
-                    data = server.getIncomingData(false);
+                    data = serverSystem.getIncomingData(false);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

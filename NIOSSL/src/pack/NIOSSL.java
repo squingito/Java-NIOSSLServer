@@ -16,14 +16,15 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutionException;
 
-public class NIOSSL {
+public class NIOSSL<type extends NIOSSLInterface> {
     private ServerSocketChannel serverSocket;
     private SocketChannel clientSocket;
     private HashMap<SocketChannel,SocketChannelData> socketProfiles = new HashMap<>();
     private Queue<keyChangeRequest> keyChangeRequests = new LinkedList<>();
-    private BlockingQueue<IncomingData> dataQueue = new ArrayBlockingQueue<IncomingData>(1024);
+    private type serverSystem;
+    private UserIOManager userIOManager;
+
     private ArrayList<SocketChannel> socks = new ArrayList<>();
-    private UserIOManager userIOManager = new UserIOManager();
 
     private int appBuffSize;
     private int socketBuffSize;
@@ -41,18 +42,10 @@ public class NIOSSL {
     private boolean running = true;
     private boolean serverMode = true;
 
-
-    public static void main(String[] args) {
-        NIOSSL server = new NIOSSL(null,0,true);
-        Worker worker = new Worker(server, server.userIOManager);
-        Thread workerThread = new Thread(worker);
-        workerThread.setDaemon(true);
-        workerThread.start();
-        server.run();
-    }
-
-    public NIOSSL(byte[] hostAddressInput, int hostPort, boolean server) {
+    public NIOSSL(byte[] hostAddressInput, int hostPort, boolean server, type serverSystem, UserIOManager userIOManager) {
+        this.userIOManager = userIOManager;
         serverMode = server;
+        this.serverSystem = serverSystem;
         if (hostAddressInput == null) {
             byte[] hostAddress = {127,0,0,1};
             this.port = 9999;
@@ -259,7 +252,7 @@ public class NIOSSL {
             output = output.substring(0,output.indexOf((char) 0b00000000));
         }
 
-        dataQueue.add(new IncomingData(sock, output));
+        serverSystem.addToIncomingDataQueue(new IncomingData(sock, output));
         sock.keyFor(select).interestOps(SelectionKey.OP_WRITE);
     }
 
@@ -445,23 +438,6 @@ public class NIOSSL {
             return true;
         }
         return false;
-    }
-
-    public IncomingData getIncomingData(boolean blocking) {
-        if (blocking) {
-            try {
-                return dataQueue.take();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-                return null;
-            }
-        } else {
-            return dataQueue.poll();
-        }
-    }
-
-    public IncomingData getIncomingData() {
-        return this.getIncomingData(true);
     }
 
     public SocketChannel getSock(int i) {
