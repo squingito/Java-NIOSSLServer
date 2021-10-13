@@ -33,8 +33,8 @@ public class SSLEngineWrapper {
             this.keyStoreTrustFilePath = keyStoreTrustFilePath;
             this.password = password;
             if (this.keyStoreFilePath == null) {
-                this.keyStoreFilePath = "C:\\Users\\squin\\IdeaProjects\\NIOSSL\\src\\pack\\myKeyStore.jks";
-                this.keyStoreTrustFilePath = "C:\\Users\\squin\\IdeaProjects\\NIOSSL\\src\\pack\\myTrustStore2.jts";
+                this.keyStoreFilePath = "C:\\Users\\squin\\Desktop\\GitHub Repos\\Java-NIOSSLServer\\NIOSSL\\src\\pack\\myKeyStore.jks";
+                this.keyStoreTrustFilePath = "C:\\Users\\squin\\Desktop\\GitHub Repos\\Java-NIOSSLServer\\NIOSSL\\src\\pack\\myTrustStore2.jts";
                 this.password = "abc123";
             }
             try {

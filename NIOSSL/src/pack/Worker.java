@@ -39,10 +39,13 @@ public class Worker implements Runnable{
                     break;
                 }
             }
-            userIOManager.print("waiting for input");
-            input = userIOManager.takeInput();
-            if (!input.equalsIgnoreCase("read")) {
-                server.send(server.getSock(0),input.getBytes());
+
+            if (userIOManager.hasNext()) {
+                userIOManager.print("here");
+                input = userIOManager.takeInput();
+                if (!input.equalsIgnoreCase("read")) {
+                    server.send(server.getSock(0), input.getBytes());
+                }
             }
         }
     }
