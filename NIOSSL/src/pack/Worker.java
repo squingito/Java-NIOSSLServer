@@ -23,7 +23,7 @@ public class Worker implements Runnable{
         IncomingData data = null;
         String input = null;
         try {
-            Thread.sleep(10000);
+            Thread.sleep(3000);
             userIOManager.print("waiting");
         } catch (Exception e) {
 
